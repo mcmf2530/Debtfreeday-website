@@ -27,7 +27,8 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: from || 'Debt Free Day <support@debtfreeday.app>',
+        // Use onboarding@resend.dev as fallback if domain not verified
+        from: 'Debt Free Day <onboarding@resend.dev>',
         to: to || ['support@debtfreeday.app'],
         reply_to: reply_to || undefined,
         subject,
