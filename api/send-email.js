@@ -3,17 +3,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const origin = req.headers.origin || '';
-  const allowed = [
-    'https://debtfreeday.app',
-    'https://www.debtfreeday.app',
-    'https://debt-payoff-tracker.vercel.app',
-    'https://debt-payoff-tracker-9ke8.vercel.app'
-  ];
-  if (origin && !allowed.some(a => origin.startsWith(a))) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
-
   const { to, from, subject, html, reply_to } = req.body;
   if (!subject || !html) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -27,8 +16,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        // Use onboarding@resend.dev as fallback if domain not verified
-        from: 'Debt Free Day <support@debtfreeday.app>',
+        from: from || 'Debt Free Day <support@debtfreeday.app>',
         to: to || ['support@debtfreeday.app'],
         reply_to: reply_to || undefined,
         subject,
