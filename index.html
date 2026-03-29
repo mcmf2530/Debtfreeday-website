@@ -1,14 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#0f0f1a" />
-  <link rel="manifest" href="/manifest.json" />
-  <title>Debt Tracker</title>
-  <style>*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{background:#0f0f1a;overflow-x:hidden}input,select,button{font-family:inherit}select{-webkit-appearance:none}</style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Debt Free Day - Know exactly when you'll be debt free."/>
+<title>Debt Free Day - Know Your Debt Free Date</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f7f5f0; --card: #ffffff; --border: rgba(0,0,0,0.08);
+  --gold: #f5c842; --gold-d: #b8870a;
+  --text: #1a1714; --text-sub: #6b6455; --text-micro: #a09880;
+  --green: #0f9b6e; --radius: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(247,245,240,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
+.nav-logo-icon{width:34px;height:34px;border-radius:8px;background:#fff;border:1px solid rgba(184,135,10,0.2);display:flex;align-items:center;justify-content:center;}
+.nav-logo-text{font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:var(--text);}
+.nav-links{display:flex;align-items:center;gap:22px;}
+.nav-links a{font-size:13px;color:var(--text-sub);text-decoration:none;transition:color 0.2s;cursor:pointer;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--text);border:none;border-radius:99px;padding:8px 18px;cursor:pointer;text-decoration:none;transition:opacity 0.2s;}
+.nav-cta:hover{opacity:0.82;}
+
+/* SECTIONS */
+section{display:none;}
+section.active{display:block;}
+
+/* HERO */
+.hero{padding:120px 24px 50px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,0.13) 0%,transparent 65%);pointer-events:none;}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(184,135,10,0.08);border:1px solid rgba(184,135,10,0.18);border-radius:99px;padding:4px 13px;margin-bottom:22px;font-size:11px;font-weight:700;color:var(--gold-d);letter-spacing:0.5px;}
+.hero h1{font-family:'Outfit',sans-serif;font-size:clamp(34px,7vw,66px);font-weight:900;color:var(--text);line-height:1.08;letter-spacing:-2px;margin-bottom:18px;max-width:660px;margin-left:auto;margin-right:auto;}
+.hero h1 span{color:var(--gold-d);}
+.hero p{font-size:17px;color:var(--text-sub);line-height:1.65;max-width:440px;margin:0 auto 32px;}
+
+/* STORE BADGES */
+.badges{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:0;}
+.badge-btn{display:inline-flex;align-items:center;gap:10px;background:var(--text);border-radius:12px;padding:10px 18px;text-decoration:none;transition:opacity 0.2s,transform 0.15s;border:none;cursor:pointer;}
+.badge-btn:hover{opacity:0.85;transform:translateY(-1px);}
+.badge-btn-light{background:#fff;border:1.5px solid rgba(0,0,0,0.12);}
+.badge-store-label{font-size:9px;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.8px;line-height:1;}
+.badge-store-label-dark{color:rgba(0,0,0,0.45);}
+.badge-store-name{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:#fff;line-height:1.1;}
+.badge-store-name-dark{color:var(--text);}
+
+/* SCREENSHOTS */
+.shots-section{padding:56px 24px 0;max-width:960px;margin:0 auto;}
+.shots-label{font-size:10px;font-weight:700;color:var(--text-micro);text-align:center;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:36px;}
+.shots-row{display:flex;justify-content:center;align-items:flex-end;position:relative;height:520px;}
+
+/* Phone shells */
+.pshell{position:absolute;border-radius:30px;overflow:hidden;box-shadow:0 32px 64px rgba(0,0,0,0.18);}
+.pshell.center{width:210px;z-index:3;bottom:0;left:50%;transform:translateX(-50%);}
+.pshell.left{width:175px;z-index:2;bottom:30px;left:50%;transform:translateX(calc(-50% - 140px)) rotate(-4deg);opacity:0.92;}
+.pshell.right{width:175px;z-index:2;bottom:30px;left:50%;transform:translateX(calc(-50% + 80px)) rotate(3deg);opacity:0.92;}
+
+/* Dark phone (center - free) */
+.dark-phone{background:#0d0d18;border:5px solid #0d0d18;}
+/* Light phone (sides - plus/partner) */
+.light-phone{background:#f0ede8;border:5px solid #e8e4dc;}
+
+.pinner-dark{background:#0a0a0f;border-radius:24px;overflow:hidden;}
+.pinner-light{background:#f7f5f0;border-radius:24px;overflow:hidden;}
+
+/* Dark screen elements */
+.d-notch{height:18px;background:#0a0a0f;display:flex;align-items:center;justify-content:center;}
+.d-pill{width:50px;height:8px;background:#1a1a2e;border-radius:99px;}
+.d-header{padding:8px 12px 5px;}
+.d-greet{font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;color:#f0ede8;}
+.d-sub{font-size:9px;color:#6b6880;margin-top:1px;}
+.d-hero{margin:3px 8px 6px;background:#14141e;border-radius:11px;padding:11px;border:1px solid rgba(245,200,66,0.1);}
+.d-lbl{font-size:7px;font-weight:700;color:#3a3850;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.d-amt{font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:#f0ede8;letter-spacing:-1px;line-height:1;}
+.d-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);border-radius:99px;padding:2px 7px;margin-top:5px;font-size:8px;font-weight:700;color:#d4a017;}
+.d-prog{height:3px;background:rgba(255,255,255,0.06);border-radius:99px;margin-top:6px;overflow:hidden;}
+.d-prog-fill{height:100%;background:linear-gradient(90deg,#f5c842,#d4a017);border-radius:99px;}
+.d-pct{font-size:7px;color:#3a3850;margin-top:2px;}
+.d-slbl{font-size:7px;font-weight:700;color:#3a3850;text-transform:uppercase;letter-spacing:0.8px;padding:4px 11px 3px;}
+.d-debt{margin:0 8px 3px;background:#14141e;border-radius:7px;padding:6px 9px;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.04);}
+.d-cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.d-dname{font-size:10px;font-weight:600;color:#e8e5df;flex:1;}
+.d-dbal{font-size:8px;color:#5a5870;}
+.d-check{width:13px;height:13px;border-radius:50%;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0;}
+.d-nav{display:flex;justify-content:space-around;padding:6px 0 8px;border-top:1px solid rgba(255,255,255,0.05);}
+.d-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.d-nav-dot{width:3px;height:3px;border-radius:50%;background:#d4a017;}
+.d-nav-lbl{font-size:7px;color:#3a3850;}
+.d-nav-lbl.on{color:#d4a017;}
+
+/* Light screen elements */
+.l-notch{height:18px;background:#f7f5f0;display:flex;align-items:center;justify-content:center;}
+.l-pill{width:50px;height:8px;background:#e0ddd8;border-radius:99px;}
+.l-header{padding:8px 12px 5px;}
+.l-greet{font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;color:#1a1714;}
+.l-sub{font-size:9px;color:#8a8070;margin-top:1px;}
+.l-hero{margin:3px 8px 6px;background:#fff;border-radius:11px;padding:11px;border:1px solid rgba(184,135,10,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.l-lbl{font-size:7px;font-weight:700;color:#a09880;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.l-amt{font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:#1a1714;letter-spacing:-1px;line-height:1;}
+.l-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(184,135,10,0.08);border:1px solid rgba(184,135,10,0.2);border-radius:99px;padding:2px 7px;margin-top:5px;font-size:8px;font-weight:700;color:#b8870a;}
+.l-prog{height:3px;background:rgba(0,0,0,0.06);border-radius:99px;margin-top:6px;overflow:hidden;}
+.l-prog-fill{height:100%;background:linear-gradient(90deg,#f5c842,#b8870a);border-radius:99px;}
+.l-pct{font-size:7px;color:#a09880;margin-top:2px;}
+.l-card{margin:0 8px 4px;background:#fff;border-radius:8px;padding:8px 10px;border:1px solid rgba(0,0,0,0.07);box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.l-ctitle{font-size:9px;font-weight:800;color:#1a1714;margin-bottom:2px;}
+.l-csub{font-size:8px;color:#8a8070;}
+.l-debt{margin:0 8px 3px;background:#fff;border-radius:7px;padding:6px 9px;display:flex;align-items:center;gap:6px;border:1px solid rgba(0,0,0,0.06);}
+.l-cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.l-dname{font-size:10px;font-weight:600;color:#1a1714;flex:1;}
+.l-dbal{font-size:8px;color:#8a8070;}
+.l-nav{display:flex;justify-content:space-around;padding:6px 0 8px;border-top:1px solid rgba(0,0,0,0.06);}
+.l-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.l-nav-dot{width:3px;height:3px;border-radius:50%;background:#b8870a;}
+.l-nav-lbl{font-size:7px;color:#a09880;}
+.l-nav-lbl.on{color:#b8870a;}
+.l-tag{display:inline-flex;align-items:center;gap:3px;background:rgba(184,135,10,0.1);border-radius:99px;padding:2px 6px;font-size:7px;font-weight:700;color:#b8870a;}
+
+/* Screen tags below phones */
+.screen-tag-row{display:flex;justify-content:center;gap:0;margin-top:16px;}
+.stag{font-size:11px;font-weight:600;color:var(--text-micro);text-align:center;}
+.stag.center-tag{width:210px;}
+.stag.side-tag{width:175px;}
+
+/* FEATURES */
+.features{padding:72px 24px;max-width:980px;margin:0 auto;}
+.sec-title{font-family:'Outfit',sans-serif;font-size:clamp(24px,5vw,40px);font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:8px;text-align:center;}
+.sec-sub{font-size:15px;color:var(--text-sub);text-align:center;margin-bottom:40px;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;}
+.feat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;transition:border-color 0.2s,box-shadow 0.2s;}
+.feat-card:hover{border-color:rgba(184,135,10,0.22);box-shadow:0 4px 18px rgba(0,0,0,0.05);}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(184,135,10,0.08);border:1px solid rgba(184,135,10,0.14);display:flex;align-items:center;justify-content:center;margin-bottom:11px;}
+.feat-title{font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.feat-body{font-size:13px;color:var(--text-sub);line-height:1.6;}
+
+/* PRICING */
+.pricing{padding:72px 24px;max-width:680px;margin:0 auto;text-align:center;}
+.billing-toggle{display:inline-flex;align-items:center;gap:0;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:4px;margin-bottom:36px;position:relative;}
+.btog-btn{padding:8px 20px;border-radius:99px;font-size:13px;font-weight:600;color:var(--text-sub);cursor:pointer;border:none;background:transparent;transition:color 0.2s;position:relative;z-index:1;}
+.btog-btn.active{color:var(--text);}
+.btog-pill{position:absolute;top:4px;bottom:4px;border-radius:99px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);transition:all 0.25s cubic-bezier(0.4,0,0.2,1);z-index:0;}
+.save-badge{display:inline-block;font-size:10px;font-weight:700;color:#0f9b6e;background:rgba(15,155,110,0.1);border-radius:99px;padding:2px 8px;margin-left:6px;}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.price-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:24px 20px;text-align:left;}
+.price-card.hot{border-color:rgba(184,135,10,0.28);background:linear-gradient(140deg,rgba(245,200,66,0.06),#fff);}
+.price-plan{font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.price-amt{font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:var(--text);letter-spacing:-1px;}
+.price-amt span{font-size:13px;font-weight:400;color:var(--text-sub);}
+.price-desc{font-size:12px;color:var(--text-sub);margin:5px 0 16px;}
+.price-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-sub);margin-bottom:7px;}
+
+/* CONTENT */
+.cpage{padding:110px 24px 80px;max-width:640px;margin:0 auto;}
+.cpage h1{font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:6px;}
+.cpage .upd{font-size:12px;color:var(--text-micro);margin-bottom:32px;}
+.cpage h2{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin:26px 0 7px;}
+.cpage p{font-size:14px;color:var(--text-sub);line-height:1.75;margin-bottom:12px;}
+.cpage ul{padding-left:18px;margin-bottom:12px;}
+.cpage li{font-size:14px;color:var(--text-sub);line-height:1.75;margin-bottom:4px;}
+.cpage a{color:var(--gold-d);text-decoration:none;}
+.cpage a:hover{text-decoration:underline;}
+
+/* FORM */
+.fcard{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:22px;margin-top:8px;}
+.fgrp{margin-bottom:14px;}
+.flbl{display:block;font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;}
+.finput,.fsel,.ftxt{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;}
+.finput:focus,.fsel:focus,.ftxt:focus{border-color:rgba(184,135,10,0.4);box-shadow:0 0 0 3px rgba(184,135,10,0.07);}
+.ftxt{resize:vertical;min-height:100px;}
+.fsub{width:100%;padding:12px;border-radius:10px;border:none;background:var(--text);color:#fff;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:opacity 0.2s;margin-top:4px;}
+.fsub:hover{opacity:0.85;}
+.fok{display:none;padding:11px;border-radius:9px;background:rgba(15,155,110,0.08);border:1px solid rgba(15,155,110,0.18);color:var(--green);font-size:13px;font-weight:600;text-align:center;margin-top:8px;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;}
+.flinks{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+.flinks a{font-size:12px;color:var(--text-micro);text-decoration:none;cursor:pointer;transition:color 0.2s;}
+.flinks a:hover{color:var(--text-sub);}
+.fcopy{font-size:11px;color:var(--text-micro);}
+.divider{height:1px;background:var(--border);}
+
+@media(max-width:640px){
+  nav{padding:12px 16px;}
+  .nav-links{display:none;}
+  .price-grid{grid-template-columns:1fr;}
+  .hero{padding:96px 18px 44px;}
+  .pshell.left,.pshell.right{display:none;}
+  .shots-row{height:420px;}
+  .pshell.center{width:190px;}
+  .screen-tag-row{justify-content:center;}
+  .stag.side-tag{display:none;}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.f1{animation:fadeUp 0.5s ease forwards;}
+.f2{animation:fadeUp 0.5s ease 0.1s forwards;opacity:0;}
+.f3{animation:fadeUp 0.5s ease 0.2s forwards;opacity:0;}
+</style>
 </head>
-<body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body>
-</html>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">
+      <svg width="19" height="19" viewBox="0 0 40 40" fill="none">
+        <rect x="8" y="10" width="24" height="22" rx="3" fill="#e8e4dc"/>
+        <rect x="8" y="10" width="24" height="8" rx="3" fill="#d4a017"/>
+        <rect x="8" y="15" width="24" height="3" fill="#d4a017"/>
+        <circle cx="14" cy="10" r="2" fill="#f7f5f0"/>
+        <circle cx="26" cy="10" r="2" fill="#f7f5f0"/>
+        <circle cx="20" cy="25" r="5" fill="#d4a017"/>
+        <polyline points="17,25 19.5,27.5 23.5,22" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Debt Free Day</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('privacy')">Privacy</a>
+    <a onclick="showPage('terms')">Terms</a>
+    <a onclick="showPage('report')">Report Issue</a>
+    <a onclick="showPage('feature')">Request Feature</a>
+  </div>
+  <a class="nav-cta" href="#">Download</a>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+<div class="hero">
+  <div class="eyebrow f1">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Your personal debt payoff tracker
+  </div>
+  <h1 class="f2">Know exactly when you'll be <span>debt free.</span></h1>
+  <p class="f2">Add your debts, pick a strategy, and see the exact date you'll be free. Every payment logged brings that date closer.</p>
+
+  <!-- Store badges -->
+  <div class="badges f3">
+    <!-- Apple App Store -->
+    <a class="badge-btn" href="#">
+      <svg width="20" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div>
+        <div class="badge-store-label">Download on the</div>
+        <div class="badge-store-name">App Store</div>
+      </div>
+    </a>
+    <!-- Google Play - official colors -->
+    <a class="badge-btn badge-btn-light" href="#">
+      <!-- Official Google Play triangle logo with 4-color gradient -->
+      <svg width="20" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M3 1.5L14.5 12 3 22.5V1.5z" fill="url(#gp1)"/>
+        <path d="M3 1.5L14.5 12l4.5-4.5L3 1.5z" fill="url(#gp2)"/>
+        <path d="M3 22.5L14.5 12l4.5 4.5L3 22.5z" fill="url(#gp3)"/>
+        <path d="M19 7.5L14.5 12l4.5 4.5 2.5-4.5L19 7.5z" fill="url(#gp4)"/>
+        <defs>
+          <linearGradient id="gp1" x1="3" y1="12" x2="14.5" y2="12" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#0D96F6"/>
+            <stop offset="1" stop-color="#00E4FF"/>
+          </linearGradient>
+          <linearGradient id="gp2" x1="3" y1="1.5" x2="19" y2="7.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#34A853"/>
+            <stop offset="1" stop-color="#5EFF7E"/>
+          </linearGradient>
+          <linearGradient id="gp3" x1="3" y1="22.5" x2="19" y2="16.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FBBC04"/>
+            <stop offset="1" stop-color="#FF8A00"/>
+          </linearGradient>
+          <linearGradient id="gp4" x1="19" y1="7.5" x2="21.5" y2="12" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#EA4335"/>
+            <stop offset="1" stop-color="#FF6D6D"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>
+        <div class="badge-store-label badge-store-label-dark">Get it on</div>
+        <div class="badge-store-name badge-store-name-dark">Google Play</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SCREENSHOTS -->
+<div class="shots-section f3">
+  <div class="shots-label">See it in action</div>
+  <div class="shots-row">
+
+    <!-- LEFT: Plus/light mode - Timeline -->
+    <div class="pshell left light-phone">
+      <div class="pinner-light">
+        <div class="l-notch"><div class="l-pill"></div></div>
+        <div style="padding:6px 12px 4px;text-align:center;">
+          <div style="font-size:7px;font-weight:700;color:#a09880;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Debt Free Day</div>
+          <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;color:#b8870a;letter-spacing:-1px;">Aug 2028</div>
+        </div>
+        <div style="display:flex;gap:4px;margin:0 8px 6px;">
+          <div style="flex:1;background:#fff;border-radius:7px;padding:7px;border:1px solid rgba(0,0,0,0.06);"><div style="font-size:11px;font-weight:900;color:#1a1714;">29mo</div><div style="font-size:7px;color:#a09880;text-transform:uppercase;letter-spacing:0.4px;margin-top:1px;">Left</div></div>
+          <div style="flex:1;background:#fff;border-radius:7px;padding:7px;border:1px solid rgba(0,0,0,0.06);"><div style="font-size:11px;font-weight:900;color:#0f9b6e;">$2.1k</div><div style="font-size:7px;color:#a09880;text-transform:uppercase;letter-spacing:0.4px;margin-top:1px;">Saved</div></div>
+        </div>
+        <div style="font-size:7px;font-weight:700;color:#a09880;text-transform:uppercase;letter-spacing:0.8px;padding:0 10px 5px;">Your Journey</div>
+        <!-- Milestones -->
+        <div style="display:flex;gap:7px;padding:0 8px;margin-bottom:7px;">
+          <div style="display:flex;flex-direction:column;align-items:center;width:18px;"><div style="width:18px;height:18px;border-radius:9px;background:#f7f5f0;border:1.5px solid rgba(184,135,10,0.25);display:flex;align-items:center;justify-content:center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="#b8870a"><path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5z" clip-rule="evenodd"/></svg></div><div style="width:1.5px;flex:1;background:rgba(0,0,0,0.07);margin-top:3px;"></div></div>
+          <div style="flex:1;padding-bottom:8px;"><div style="font-size:7px;font-weight:700;color:#b8870a;text-transform:uppercase;letter-spacing:0.5px;">Now</div><div style="font-size:9px;font-weight:700;color:#1a1714;">Targeting Visa Card</div><div style="font-size:8px;color:#8a8070;line-height:1.4;">Avalanche strategy active</div></div>
+        </div>
+        <div style="display:flex;gap:7px;padding:0 8px;margin-bottom:7px;">
+          <div style="display:flex;flex-direction:column;align-items:center;width:18px;"><div style="width:18px;height:18px;border-radius:9px;background:#f7f5f0;border:1.5px solid rgba(184,135,10,0.18);display:flex;align-items:center;justify-content:center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="#b8870a"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207z" clip-rule="evenodd"/></svg></div><div style="width:1.5px;flex:1;background:rgba(0,0,0,0.07);margin-top:3px;"></div></div>
+          <div style="flex:1;padding-bottom:8px;"><div style="font-size:7px;font-weight:700;color:#d4a017;text-transform:uppercase;letter-spacing:0.5px;">Oct 2026</div><div style="font-size:9px;font-weight:700;color:#1a1714;">Visa Card cleared</div><div style="font-size:8px;color:#8a8070;line-height:1.4;">$120/mo rolls forward</div></div>
+        </div>
+        <div style="display:flex;gap:7px;padding:0 8px;margin-bottom:8px;">
+          <div style="width:18px;height:18px;border-radius:9px;background:linear-gradient(135deg,#f5c842,#b8870a);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.53 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v5.69a.75.75 0 0 0 1.5 0v-5.69l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1;"><div style="font-size:7px;font-weight:700;color:#b8870a;text-transform:uppercase;letter-spacing:0.5px;">Aug 2028</div><div style="font-size:9px;font-weight:700;color:#1a1714;">Debt Free Day</div><div style="font-size:8px;color:#8a8070;">$645/mo back in pocket</div></div>
+        </div>
+        <div class="l-nav">
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><div class="l-nav-lbl">Home</div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/></svg><div class="l-nav-lbl">Debts</div></div>
+          <div class="l-nav-item"><div style="width:20px;height:20px;border-radius:10px;background:rgba(184,135,10,0.18);display:flex;align-items:center;justify-content:center;"><svg width="9" height="9" viewBox="0 0 24 24" fill="#b8870a"><path d="M12 5v14M5 12h14"/></svg></div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="#b8870a"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="l-nav-lbl on">Timeline</div><div class="l-nav-dot"></div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><div class="l-nav-lbl">Strategy</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Free/dark mode - Home -->
+    <div class="pshell center dark-phone">
+      <div class="pinner-dark">
+        <div class="d-notch"><div class="d-pill"></div></div>
+        <div class="d-header">
+          <div class="d-greet">Good morning, friend 👋</div>
+          <div class="d-sub">2 of 3 minimums confirmed</div>
+        </div>
+        <div class="d-hero">
+          <div class="d-lbl">Total Remaining</div>
+          <div class="d-amt">$24,300</div>
+          <div class="d-badge">
+            <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Debt Free Day: Aug 2028
+          </div>
+          <div class="d-prog"><div class="d-prog-fill" style="width:38%"></div></div>
+          <div class="d-pct">38% paid off</div>
+        </div>
+        <div class="d-slbl">This Month</div>
+        <div class="d-debt"><div class="d-cdot" style="background:#d4a017;"></div><div class="d-dname">Visa Card</div><div class="d-dbal">$4,200</div><div class="d-check"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div class="d-debt"><div class="d-cdot" style="background:#0891b2;"></div><div class="d-dname">Student Loan</div><div class="d-dbal">$18,500</div></div>
+        <div class="d-debt" style="margin-bottom:8px;"><div class="d-cdot" style="background:#7c3aed;"></div><div class="d-dname">Car Loan</div><div class="d-dbal">$1,600</div><div class="d-check"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div style="margin:0 8px 8px;background:#14141e;border-radius:8px;padding:8px 10px;border:1px solid rgba(245,200,66,0.08);display:flex;align-items:center;gap:7px;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div><div style="font-size:9px;font-weight:700;color:#d4a017;">Next due in 4 days</div><div style="font-size:8px;color:#5a5870;">Visa Card · $120 min</div></div>
+        </div>
+        <div class="d-nav">
+          <div class="d-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="#d4a017"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><div class="d-nav-lbl on">Home</div><div class="d-nav-dot"></div></div>
+          <div class="d-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a3850" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/></svg><div class="d-nav-lbl">Debts</div></div>
+          <div class="d-nav-item"><div style="width:20px;height:20px;border-radius:10px;background:rgba(245,200,66,0.22);display:flex;align-items:center;justify-content:center;"><svg width="9" height="9" viewBox="0 0 24 24" fill="#d4a017"><path d="M12 5v14M5 12h14"/></svg></div></div>
+          <div class="d-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a3850" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="d-nav-lbl">Timeline</div></div>
+          <div class="d-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a3850" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><div class="d-nav-lbl">Strategy</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Plus/light mode - Strategy -->
+    <div class="pshell right light-phone">
+      <div class="pinner-light">
+        <div class="l-notch"><div class="l-pill"></div></div>
+        <div class="l-header">
+          <div class="l-greet">Strategy</div>
+          <div class="l-sub">Your payoff plan, your rules.</div>
+        </div>
+        <!-- Comparison -->
+        <div style="margin:3px 8px 6px;background:#fff;border-radius:10px;padding:9px;border:1px solid rgba(0,0,0,0.07);">
+          <div style="font-size:7px;font-weight:700;color:#a09880;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;">Strategy Comparison</div>
+          <div style="display:flex;gap:5px;">
+            <div style="flex:1;background:rgba(184,135,10,0.07);border-radius:6px;padding:6px;border:1px solid rgba(184,135,10,0.18);">
+              <div style="font-size:8px;font-weight:800;color:#b8870a;">Avalanche</div>
+              <div style="font-size:10px;font-weight:900;color:#1a1714;margin-top:1px;">Aug 2028</div>
+              <div style="font-size:7px;color:#0f9b6e;margin-top:1px;font-weight:600;">Saves $2,100</div>
+            </div>
+            <div style="flex:1;background:#f7f5f0;border-radius:6px;padding:6px;border:1px solid rgba(0,0,0,0.06);">
+              <div style="font-size:8px;font-weight:800;color:#8a8070;">Snowball</div>
+              <div style="font-size:10px;font-weight:900;color:#1a1714;margin-top:1px;">Nov 2028</div>
+              <div style="font-size:7px;color:#a09880;margin-top:1px;">More wins</div>
+            </div>
+          </div>
+        </div>
+        <!-- Strategy cards -->
+        <div style="margin:0 8px 4px;background:#fff;border-radius:9px;padding:9px;border:1.5px solid rgba(184,135,10,0.25);">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <div style="font-size:13px;">🌊</div>
+            <div style="flex:1;"><div style="font-size:10px;font-weight:800;color:#1a1714;">Avalanche</div><div style="font-size:8px;color:#b8870a;font-weight:600;">Highest interest first</div></div>
+            <div style="width:13px;height:13px;border-radius:50%;background:#b8870a;display:flex;align-items:center;justify-content:center;"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div style="font-size:8px;color:#8a8070;line-height:1.4;">Mathematically optimal. Pay less interest.</div>
+        </div>
+        <div style="margin:0 8px 8px;background:#f7f5f0;border-radius:9px;padding:9px;border:1px solid rgba(0,0,0,0.06);">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="font-size:13px;">❄️</div>
+            <div style="flex:1;"><div style="font-size:10px;font-weight:800;color:#1a1714;">Snowball</div><div style="font-size:8px;color:#8a8070;">Smallest balance first</div></div>
+          </div>
+        </div>
+        <div class="l-nav">
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><div class="l-nav-lbl">Home</div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/></svg><div class="l-nav-lbl">Debts</div></div>
+          <div class="l-nav-item"><div style="width:20px;height:20px;border-radius:10px;background:rgba(184,135,10,0.18);display:flex;align-items:center;justify-content:center;"><svg width="9" height="9" viewBox="0 0 24 24" fill="#b8870a"><path d="M12 5v14M5 12h14"/></svg></div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0b8a8" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="l-nav-lbl">Timeline</div></div>
+          <div class="l-nav-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="#b8870a"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg><div class="l-nav-lbl on">Strategy</div><div class="l-nav-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- Screen labels -->
+  <div class="screen-tag-row">
+    <div class="stag side-tag" style="padding-right:20px;">Timeline</div>
+    <div class="stag center-tag">Home</div>
+    <div class="stag side-tag" style="padding-left:20px;">Strategy</div>
+  </div>
+</div>
+
+<div class="divider" style="margin-top:64px;"></div>
+
+<!-- FEATURES -->
+<div class="features">
+  <div class="sec-title">Everything you need to get out of debt</div>
+  <div class="sec-sub">Simple tools, powerful projections, zero fluff.</div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="feat-title">Your Debt Free Day</div><div class="feat-body">See the exact month and year you'll be debt free. Updates every time you log a payment.</div></div>
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="feat-title">Balance Over Time</div><div class="feat-body">Watch your total debt curve downward month by month. A clear visual of real progress.</div></div>
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></div><div class="feat-title">Avalanche or Snowball</div><div class="feat-body">Pick your strategy. Avalanche saves the most interest. Snowball builds momentum. Compare side by side.</div></div>
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="feat-title">Partner Access</div><div class="feat-body">Share your progress. Your partner sees your Debt Free Day, milestones, and payment confirmations.</div></div>
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><div class="feat-title">Full Amortization Table</div><div class="feat-body">See exactly how every payment splits between principal and interest. Know where your money goes.</div></div>
+    <div class="feat-card"><div class="feat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="feat-title">Refinance Calculator</div><div class="feat-body">Enter a new rate and instantly see how much you'd save. Know if refinancing is worth it.</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PRICING with toggle -->
+<div class="pricing">
+  <div class="sec-title">Simple pricing</div>
+  <div class="sec-sub">Start free. Upgrade when you're ready.</div>
+
+  <!-- Billing toggle -->
+  <div class="billing-toggle" id="billingToggle">
+    <div class="btog-pill" id="togPill" style="left:4px;width:86px;"></div>
+    <button class="btog-btn active" id="btnMonthly" onclick="setBilling('monthly')">Monthly</button>
+    <button class="btog-btn" id="btnYearly" onclick="setBilling('yearly')">Yearly <span class="save-badge" id="saveBadge">Save 17%</span></button>
+  </div>
+
+  <div class="price-grid">
+    <!-- Free -->
+    <div class="price-card">
+      <div class="price-plan">Free</div>
+      <div class="price-amt">$0</div>
+      <div class="price-desc">Everything you need to start.</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Debt Free Day calculation</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Balance over time chart</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Avalanche vs Snowball</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unlimited debts</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Payment tracking</div>
+    </div>
+    <!-- Plus -->
+    <div class="price-card hot">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <div class="price-plan" style="color:var(--gold-d);">Plus</div>
+        <div style="font-size:9px;font-weight:700;color:#fff;background:var(--gold-d);border-radius:99px;padding:2px 8px;">Popular</div>
+      </div>
+      <div class="price-amt" style="color:var(--gold-d);" id="plusPrice">$3.99 <span>/mo</span></div>
+      <div class="price-desc" id="plusDesc">Billed monthly. Cancel anytime.</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Everything in Free</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full amortization table</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>What-If simulator</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Refinance calculator</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Partner access</div>
+      <div class="price-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b8870a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Custom debt ranking</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="flinks">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('privacy')">Privacy Policy</a>
+    <a onclick="showPage('terms')">Terms of Service</a>
+    <a onclick="showPage('report')">Report an Issue</a>
+    <a onclick="showPage('feature')">Request a Feature</a>
+    <a href="/cdn-cgi/l/email-protection#ef9c9a9f9f809d9baf8b8a8d9b899d8a8a8b8e96c18e9f9f">Contact</a>
+  </div>
+  <div class="fcopy">2026 Debt Free Day. All rights reserved.</div>
+</footer>
+</section>
+
+<!-- PRIVACY -->
+<section id="privacy">
+<div class="cpage">
+  <h1>Privacy Policy</h1>
+  <div class="upd">Last updated: March 20, 2026</div>
+  <p>Debt Free Day ("we", "us", or "our") is committed to protecting your privacy. This policy explains what information we collect, how we use it, and your rights.</p>
+  <h2>Information We Collect</h2>
+  <p>We collect information you provide when you create an account or use the app:</p>
+  <ul><li>Name and email address (for account creation)</li><li>Debt information you enter (balances, interest rates, minimum payments)</li><li>Payment records you log within the app</li><li>Device information and anonymized usage analytics</li></ul>
+  <h2>How We Use Your Information</h2>
+  <ul><li>Provide and improve the Debt Free Day app</li><li>Calculate your personalized debt payoff projections</li><li>Enable partner sharing features when you choose to use them</li><li>Send account-related notifications</li><li>Respond to your support requests</li></ul>
+  <h2>Data Storage and Security</h2>
+  <p>Your data is stored securely using Supabase with industry-standard encryption in transit and at rest. We do not sell your personal information to third parties. Financial data is used solely to power your in-app calculations and is never shared with financial institutions or advertisers.</p>
+  <h2>Partner Sharing</h2>
+  <p>If you invite a partner, they can view your debt totals, Debt Free Day date, and payment confirmations. Payment notes and history remain private. You can revoke partner access at any time from Settings.</p>
+  <h2>Data Deletion</h2>
+  <p>You can delete your account and all data at any time. Go to Settings, then Reset Account, then Delete Account. You can also email <a href="/cdn-cgi/l/email-protection#24575154544b565064404146504256414140455d0a455454"><span class="__cf_email__" data-cfemail="acdfd9dcdcc3ded8ecc8c9ced8cadec9c9c8cdd582cddcdc">[email&#160;protected]</span></a>. All data is permanently deleted within 30 days.</p>
+  <h2>Children's Privacy</h2>
+  <p>Debt Free Day is not intended for children under 13. We do not knowingly collect personal information from children under 13.</p>
+  <h2>Changes</h2>
+  <p>We may update this policy and will notify you of significant changes via email or in-app notification.</p>
+  <h2>Contact</h2>
+  <p>Questions? Email <a href="/cdn-cgi/l/email-protection#e2919792928d9096a2868780968490878786839bcc839292"><span class="__cf_email__" data-cfemail="dba8aeababb4a9af9bbfbeb9afbda9bebebfbaa2f5baabab">[email&#160;protected]</span></a>.</p>
+</div>
+<footer><div class="flinks"><a onclick="showPage('home')">Home</a><a onclick="showPage('terms')">Terms</a><a onclick="showPage('report')">Report Issue</a><a onclick="showPage('feature')">Request Feature</a><a href="/cdn-cgi/l/email-protection#23505653534c515763474641574551464647425a0d425353">Contact</a></div><div class="fcopy">2026 Debt Free Day. All rights reserved.</div></footer>
+</section>
+
+<!-- TERMS -->
+<section id="terms">
+<div class="cpage">
+  <h1>Terms of Service</h1>
+  <div class="upd">Last updated: March 20, 2026</div>
+  <p>By using Debt Free Day, you agree to these terms.</p>
+  <h2>Use of the App</h2>
+  <p>You agree to use Debt Free Day for lawful purposes only and not in any way that causes harm to others or disrupts the service.</p>
+  <h2>Financial Disclaimer</h2>
+  <p>Debt projections and calculations are for informational purposes only and do not constitute financial advice. We make no guarantees about accuracy. You are responsible for the information you enter. Debt Free Day is not liable for financial decisions made based on app projections.</p>
+  <h2>Your Account</h2>
+  <p>You are responsible for maintaining the security of your account. Notify us at <a href="/cdn-cgi/l/email-protection#b3c0c6c3c3dcc1c7f3d7d6d1c7d5c1d6d6d7d2ca9dd2c3c3"><span class="__cf_email__" data-cfemail="10636560607f62645074757264766275757471693e716060">[email&#160;protected]</span></a> if you believe your account has been compromised.</p>
+  <h2>Subscriptions</h2>
+  <p>Debt Free Day Plus is $3.99/month or $39.99/year. Subscriptions auto-renew unless cancelled. Cancel anytime from Settings. No refunds for partial billing periods.</p>
+  <h2>Privacy</h2>
+  <p>Your use of the app is governed by our <a href="#" onclick="showPage('privacy')">Privacy Policy</a>, incorporated into these terms by reference.</p>
+  <h2>Termination</h2>
+  <p>We reserve the right to suspend or terminate accounts that violate these terms.</p>
+  <h2>Contact</h2>
+  <p>Questions? Email <a href="/cdn-cgi/l/email-protection#c9babcb9b9a6bbbd89adacabbdafbbacacada8b0e7a8b9b9"><span class="__cf_email__" data-cfemail="91e2e4e1e1fee3e5d1f5f4f3e5f7e3f4f4f5f0e8bff0e1e1">[email&#160;protected]</span></a>.</p>
+</div>
+<footer><div class="flinks"><a onclick="showPage('home')">Home</a><a onclick="showPage('privacy')">Privacy</a><a onclick="showPage('report')">Report Issue</a><a onclick="showPage('feature')">Request Feature</a><a href="/cdn-cgi/l/email-protection#681b1d1818071a1c280c0d0a1c0e1a0d0d0c091146091818">Contact</a></div><div class="fcopy">2026 Debt Free Day. All rights reserved.</div></footer>
+</section>
+
+<!-- REPORT -->
+<section id="report">
+<div class="cpage">
+  <h1>Report an Issue</h1>
+  <p style="margin-bottom:22px;">Found a bug? Let us know and we'll fix it fast.</p>
+  <div class="fcard">
+    <div class="fgrp"><label class="flbl">Your email</label><input class="finput" type="email" placeholder="you@example.com" id="report-email"/></div>
+    <div class="fgrp"><label class="flbl">Area affected</label><select class="fsel" id="report-area"><option value="">Select an area...</option><option>Home screen</option><option>Debts screen</option><option>Log Extra Payment</option><option>Timeline</option><option>Strategy tab</option><option>Debt Detail</option><option>Settings</option><option>Onboarding</option><option>Partner / Team</option><option>Calculations</option><option>Other</option></select></div>
+    <div class="fgrp"><label class="flbl">Describe the issue</label><textarea class="ftxt" id="report-desc" placeholder="What happened? What did you expect?"></textarea></div>
+    <div class="fgrp"><label class="flbl">Severity</label><select class="fsel" id="report-sev"><option value="">Select severity...</option><option>App crashes or won't load</option><option>Feature is completely broken</option><option>Feature works but incorrectly</option><option>Minor visual or copy issue</option></select></div>
+    <button class="fsub" onclick="submitReport()">Submit Report</button>
+    <div class="fok" id="report-ok">Thanks for the report. We'll look into it and follow up if we need more details.</div>
+  </div>
+</div>
+<footer><div class="flinks"><a onclick="showPage('home')">Home</a><a onclick="showPage('privacy')">Privacy</a><a onclick="showPage('terms')">Terms</a><a onclick="showPage('feature')">Request Feature</a><a href="/cdn-cgi/l/email-protection#8ffcfaffffe0fdfbcfebeaedfbe9fdeaeaebeef6a1eeffff">Contact</a></div><div class="fcopy">2026 Debt Free Day. All rights reserved.</div></footer>
+</section>
+
+<!-- FEATURE REQUEST -->
+<section id="feature">
+<div class="cpage">
+  <h1>Request a Feature</h1>
+  <p style="margin-bottom:22px;">Have an idea? We read every submission.</p>
+  <div class="fcard">
+    <div class="fgrp"><label class="flbl">Your email <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-micro)">(optional)</span></label><input class="finput" type="email" placeholder="you@example.com" id="feat-email"/></div>
+    <div class="fgrp"><label class="flbl">Category</label><select class="fsel" id="feat-cat"><option value="">Select a category...</option><option>Debt tracking</option><option>Payment logging</option><option>Strategy and calculations</option><option>Partner and sharing</option><option>Charts and visualizations</option><option>Notifications and reminders</option><option>Import and export</option><option>Something else</option></select></div>
+    <div class="fgrp"><label class="flbl">Describe your idea</label><textarea class="ftxt" id="feat-desc" placeholder="What would you like to see? How would it help you?"></textarea></div>
+    <div class="fgrp"><label class="flbl">Importance</label><select class="fsel" id="feat-pri"><option value="">Select importance...</option><option>Nice to have</option><option>Would use it regularly</option><option>This is blocking me from using the app</option></select></div>
+    <button class="fsub" onclick="submitFeature()">Submit Request</button>
+    <div class="fok" id="feat-ok">Got it. Your idea has been added to our backlog.</div>
+  </div>
+</div>
+<footer><div class="flinks"><a onclick="showPage('home')">Home</a><a onclick="showPage('privacy')">Privacy</a><a onclick="showPage('terms')">Terms</a><a onclick="showPage('report')">Report Issue</a><a href="/cdn-cgi/l/email-protection#6f1c1a1f1f001d1b2f0b0a0d1b091d0a0a0b0e16410e1f1f">Contact</a></div><div class="fcopy">2026 Debt Free Day. All rights reserved.</div></footer>
+</section>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function showPage(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  var el=document.getElementById(id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+}
+
+// Billing toggle
+var billing='monthly';
+function setBilling(type){
+  billing=type;
+  var pill=document.getElementById('togPill');
+  var bm=document.getElementById('btnMonthly');
+  var by=document.getElementById('btnYearly');
+  var price=document.getElementById('plusPrice');
+  var desc=document.getElementById('plusDesc');
+  if(type==='monthly'){
+    pill.style.left='4px';
+    pill.style.width='86px';
+    bm.classList.add('active');
+    by.classList.remove('active');
+    price.innerHTML='$3.99 <span>/mo</span>';
+    desc.textContent='Billed monthly. Cancel anytime.';
+  } else {
+    pill.style.left='94px';
+    pill.style.width='108px';
+    by.classList.add('active');
+    bm.classList.remove('active');
+    price.innerHTML='$39.99 <span>/yr</span>';
+    desc.textContent="That's $3.33/mo. 2 months free.";
+  }
+}
+
+function submitReport(){
+  var email=document.getElementById('report-email').value.trim();
+  var area=document.getElementById('report-area').value;
+  var desc=document.getElementById('report-desc').value.trim();
+  var sev=document.getElementById('report-sev').value;
+  if(!desc){alert('Please describe the issue.');return;}
+  var btn=document.querySelector('#report .fsub');
+  btn.textContent='Sending...';btn.disabled=true;
+  fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+RESEND_KEY},
+    body:JSON.stringify({
+      from:'Debt Free Day <support@debtfreeday.app>',
+      to:['support@debtfreeday.app'],
+      reply_to:email||undefined,
+      subject:'Bug Report'+(area?' — '+area:''),
+      html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
+           '<p><strong>Area:</strong> '+(area||'Not specified')+'</p>'+
+           '<p><strong>Severity:</strong> '+(sev||'Not specified')+'</p>'+
+           '<hr/><p><strong>Description:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
+    })
+  }).then(function(r){
+    btn.textContent='Submit Report';btn.disabled=false;
+    if(r.ok){
+      document.getElementById('report-ok').style.display='block';
+      document.getElementById('report-email').value='';
+      document.getElementById('report-area').value='';
+      document.getElementById('report-desc').value='';
+      document.getElementById('report-sev').value='';
+    } else {
+      alert('Something went wrong. Please email support@debtfreeday.app directly.');
+    }
+  }).catch(function(){
+    btn.textContent='Submit Report';btn.disabled=false;
+    alert('Something went wrong. Please email support@debtfreeday.app directly.');
+  });
+}
+
+function submitFeature(){
+  var email=document.getElementById('feat-email').value.trim();
+  var cat=document.getElementById('feat-cat').value;
+  var desc=document.getElementById('feat-desc').value.trim();
+  var pri=document.getElementById('feat-pri').value;
+  if(!desc){alert('Please describe your feature request.');return;}
+  var btn=document.querySelector('#feature .fsub');
+  btn.textContent='Sending...';btn.disabled=true;
+  fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+RESEND_KEY},
+    body:JSON.stringify({
+      from:'Debt Free Day <support@debtfreeday.app>',
+      to:['support@debtfreeday.app'],
+      reply_to:email||undefined,
+      subject:'Feature Request'+(cat?' — '+cat:''),
+      html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
+           '<p><strong>Category:</strong> '+(cat||'Not specified')+'</p>'+
+           '<p><strong>Importance:</strong> '+(pri||'Not specified')+'</p>'+
+           '<hr/><p><strong>Idea:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
+    })
+  }).then(function(r){
+    btn.textContent='Submit Request';btn.disabled=false;
+    if(r.ok){
+      document.getElementById('feat-ok').style.display='block';
+      document.getElementById('feat-email').value='';
+      document.getElementById('feat-cat').value='';
+      document.getElementById('feat-desc').value='';
+      document.getElementById('feat-pri').value='';
+    } else {
+      alert('Something went wrong. Please email support@debtfreeday.app directly.');
+    }
+  }).catch(function(){
+    btn.textContent='Submit Request';btn.disabled=false;
+    alert('Something went wrong. Please email support@debtfreeday.app directly.');
+  });
+}
+
+var h=window.location.hash.replace('#','');
+if(['privacy','terms','report','feature'].includes(h))showPage(h);
+</script>

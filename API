@@ -1,21 +1,18 @@
 export default async function handler(req, res) {
+  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Allow both the app and website origins
+  // Basic origin check
   const origin = req.headers.origin || '';
-  const allowed = [
-    'https://debtfreeday.app',
-    'https://www.debtfreeday.app',
-    'https://debt-payoff-tracker.vercel.app',
-    'https://debt-payoff-tracker-9ke8.vercel.app'
-  ];
-  if (origin && !allowed.some(a => origin.startsWith(a))) {
+  const allowed = ['https://debtfreeday.app', 'https://www.debtfreeday.app'];
+  if (!allowed.includes(origin)) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
   const { to, from, subject, html, reply_to } = req.body;
+
   if (!subject || !html) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
