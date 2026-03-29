@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         // Use onboarding@resend.dev as fallback if domain not verified
-        from: 'Debt Free Day <onboarding@resend.dev>',
+        from: 'Debt Free Day <support@debtfreeday.app>',
         to: to || ['support@debtfreeday.app'],
         reply_to: reply_to || undefined,
         subject,
