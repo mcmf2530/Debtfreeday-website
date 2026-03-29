@@ -610,6 +610,14 @@ function setBilling(type){
   }
 }
 
+function sendEmail(payload, onSuccess, onError) {
+  fetch('/api/send-email', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(r){ if(r.ok) onSuccess(); else onError(); }).catch(onError);
+}
+
 function submitReport(){
   var email=document.getElementById('report-email').value.trim();
   var area=document.getElementById('report-area').value;
@@ -618,31 +626,21 @@ function submitReport(){
   if(!desc){alert('Please describe the issue.');return;}
   var btn=document.querySelector('#report .fsub');
   btn.textContent='Sending...';btn.disabled=true;
-  fetch('https://api.resend.com/emails',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+RESEND_KEY},
-    body:JSON.stringify({
-      from:'Debt Free Day <support@debtfreeday.app>',
-      to:['support@debtfreeday.app'],
-      reply_to:email||undefined,
-      subject:'Bug Report'+(area?' — '+area:''),
-      html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
-           '<p><strong>Area:</strong> '+(area||'Not specified')+'</p>'+
-           '<p><strong>Severity:</strong> '+(sev||'Not specified')+'</p>'+
-           '<hr/><p><strong>Description:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
-    })
-  }).then(function(r){
+  sendEmail({
+    subject:'Bug Report'+(area?' — '+area:''),
+    reply_to:email||undefined,
+    html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
+         '<p><strong>Area:</strong> '+(area||'Not specified')+'</p>'+
+         '<p><strong>Severity:</strong> '+(sev||'Not specified')+'</p>'+
+         '<hr/><p><strong>Description:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
+  }, function(){
     btn.textContent='Submit Report';btn.disabled=false;
-    if(r.ok){
-      document.getElementById('report-ok').style.display='block';
-      document.getElementById('report-email').value='';
-      document.getElementById('report-area').value='';
-      document.getElementById('report-desc').value='';
-      document.getElementById('report-sev').value='';
-    } else {
-      alert('Something went wrong. Please email support@debtfreeday.app directly.');
-    }
-  }).catch(function(){
+    document.getElementById('report-ok').style.display='block';
+    document.getElementById('report-email').value='';
+    document.getElementById('report-area').value='';
+    document.getElementById('report-desc').value='';
+    document.getElementById('report-sev').value='';
+  }, function(){
     btn.textContent='Submit Report';btn.disabled=false;
     alert('Something went wrong. Please email support@debtfreeday.app directly.');
   });
@@ -656,31 +654,21 @@ function submitFeature(){
   if(!desc){alert('Please describe your feature request.');return;}
   var btn=document.querySelector('#feature .fsub');
   btn.textContent='Sending...';btn.disabled=true;
-  fetch('https://api.resend.com/emails',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+RESEND_KEY},
-    body:JSON.stringify({
-      from:'Debt Free Day <support@debtfreeday.app>',
-      to:['support@debtfreeday.app'],
-      reply_to:email||undefined,
-      subject:'Feature Request'+(cat?' — '+cat:''),
-      html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
-           '<p><strong>Category:</strong> '+(cat||'Not specified')+'</p>'+
-           '<p><strong>Importance:</strong> '+(pri||'Not specified')+'</p>'+
-           '<hr/><p><strong>Idea:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
-    })
-  }).then(function(r){
+  sendEmail({
+    subject:'Feature Request'+(cat?' — '+cat:''),
+    reply_to:email||undefined,
+    html:'<p><strong>From:</strong> '+(email||'Anonymous')+'</p>'+
+         '<p><strong>Category:</strong> '+(cat||'Not specified')+'</p>'+
+         '<p><strong>Importance:</strong> '+(pri||'Not specified')+'</p>'+
+         '<hr/><p><strong>Idea:</strong></p><p>'+desc.replace(/\n/g,'<br/>')+'</p>'
+  }, function(){
     btn.textContent='Submit Request';btn.disabled=false;
-    if(r.ok){
-      document.getElementById('feat-ok').style.display='block';
-      document.getElementById('feat-email').value='';
-      document.getElementById('feat-cat').value='';
-      document.getElementById('feat-desc').value='';
-      document.getElementById('feat-pri').value='';
-    } else {
-      alert('Something went wrong. Please email support@debtfreeday.app directly.');
-    }
-  }).catch(function(){
+    document.getElementById('feat-ok').style.display='block';
+    document.getElementById('feat-email').value='';
+    document.getElementById('feat-cat').value='';
+    document.getElementById('feat-desc').value='';
+    document.getElementById('feat-pri').value='';
+  }, function(){
     btn.textContent='Submit Request';btn.disabled=false;
     alert('Something went wrong. Please email support@debtfreeday.app directly.');
   });
@@ -688,4 +676,6 @@ function submitFeature(){
 
 var h=window.location.hash.replace('#','');
 if(['privacy','terms','report','feature'].includes(h))showPage(h);
+var p=new URLSearchParams(window.location.search).get('page');
+if(['privacy','terms','report','feature'].includes(p))showPage(p);
 </script>
